@@ -24,9 +24,6 @@ double X_D = 0,Y_D = 0,Z_D = 0;
 bool FLAG_TOCHNOST_PEREMECH = 0;
 double Z_begin = Z_D , Z_end = Z_D;
 
-//-
-bool FLAG_PRIGOK = 0;
-
 //класс для настройки камеры
 class CustomCamera : public Camera
 {
@@ -223,8 +220,7 @@ void keyDownEvent(OpenGL *ogl, int key)
 	{
 		light.pos = camera.pos;
 	}
-	//=======================================
-	//Дополнительно MY на будущее // перемещение объекта
+	// перемещение объекта
 	if (key == 37)	//<--
 		{
 			if (FLAG_TOCHNOST_PEREMECH == 0)
@@ -277,12 +273,6 @@ void keyDownEvent(OpenGL *ogl, int key)
 			{Z_D-=0.05;}
 			Z_begin = Z_D;
 		}
-
-	if (key == 32)	//PgDn
-		{
-			FLAG_PRIGOK = !FLAG_PRIGOK;
-		}
-
 
 	//-------------------------
 	if (key == 16)
@@ -396,78 +386,6 @@ double Vektor[] = {0,0,0};
 double vektor_a[] = {0,0,0};
 double vektor_b[] = {0,0,0};
 
-// Пока что ненужное --
-double OPREDELITEL(double i, double j, double k, double ax, double ay, double az, double bx, double by, double bz)
-{
-	//+
-	double chast1 = i*ax*bz;
-	double chast2 = j*az*bx;
-	double chast3 = k*ax*by;
-	//-
-	double chast4 = k*ay*bx;
-	double chast5 = i*az*by;
-	double chast6 = j*ax*bz;
-	double Opred = (chast1+chast2+chast3-chast4-chast5-chast6);
-	return Opred;
-}
-
-bool flag_obratno_prigok = 0;
-
-void PRIGOK(double visota)
-{
-	Z_end = Z_begin+visota;
-	if (flag_obratno_prigok == 0)
-		{
-			if (Z_D<=Z_begin+0.1*visota)
-			Z_D+=0.11;
-			if (Z_D<=Z_begin+0.2*visota)
-			Z_D+=0.1;
-			if (Z_D<=Z_begin+0.3*visota)
-			Z_D+=0.09;
-			if (Z_D<=Z_begin+0.4*visota)
-			Z_D+=0.08;
-			if (Z_D<=Z_begin+0.5*visota)
-			Z_D+=0.07;
-			if (Z_D<=Z_begin+0.6*visota)
-			Z_D+=0.06;
-			if (Z_D<=Z_begin+0.7*visota)
-			Z_D+=0.05;
-			if (Z_D<=Z_begin+0.8*visota)
-			Z_D+=0.04;
-			if (Z_D<=Z_begin+0.9*visota)
-			Z_D+=0.03;
-		}
-	if (flag_obratno_prigok == 1)
-		{
-			if (Z_D>=Z_end-0.1*visota)
-			Z_D-=0.01;
-			if (Z_D>=Z_end-0.2*visota)
-			Z_D-=0.02;
-			if (Z_D>=Z_end-0.3*visota)
-			Z_D-=0.03;
-			if (Z_D>=Z_end-0.4*visota)
-			Z_D-=0.04;
-			if (Z_D>=Z_end-0.5*visota)
-			Z_D-=0.05;
-			if (Z_D>=Z_end-0.6*visota)
-			Z_D-=0.06;
-			if (Z_D>=Z_end-0.7*visota)
-			Z_D-=0.07;
-			if (Z_D>=Z_end-0.8*visota)
-			Z_D-=0.08;
-			if (Z_D>=Z_end-0.9*visota)
-			Z_D-=0.09;
-			Z_begin = Z_D;
-			Z_end = Z_D;
-		}
-	if (Z_D>=(Z_end))
-		flag_obratno_prigok = 1;
-    if (Z_D<=Z_begin) 
-	{flag_obratno_prigok = 0; FLAG_PRIGOK = !FLAG_PRIGOK;}
-
-
-}
-//----------
 
 void Krug(double x, double y, double z, double Radius , double color1,double color2,double color3,double alpha1)
 { 
@@ -886,19 +804,6 @@ void Soedinenie(double z, double z1)
 
 	glEnd();
 }
-//This правильная, но ненужная функция
-/*double Dlina_Okr(double Radius)
-{
-	double Dlina = 2 * PI1 * Radius;
-	return Dlina;
-}
-*/
-
-/*double Dlina_Chasti_Okr(double Radius, double Ugol)
-{
-	double Dlina = Ugol * Radius;
-	return Dlina;
-}*/
 
 void Okrugnost(double D[], double C[], double M[], double O[], double R)
 {
@@ -1355,8 +1260,6 @@ void Okrugnost2_VERCH(double G[], double H[], double E[], double O[], double R)
 	}
 }
 //==================================================================================================
-//================================================================================================================
-//================================================================================================================
 
 void KRIVAYA_Bese(double A[], double B[], double C[], double D[], double Color1, double Color2, double Color3)
 {
@@ -1523,70 +1426,11 @@ void OBJECT_01(double Coord_X, double Coord_Y, double Coord_Z,double storona_kub
 
 
 double t = 0.0; 
-//>>>>> к первой функции передвижения объекта по кривой Безье
-bool flag_obratno = 0;
-double alpha = 0;
-void SCHET_ALPHA(double P[], double A[])
-{
-	double null[] = {4,A[1]};
-	double Ugol = acos((pow(Dlina_line(A, null), 2) + pow(Dlina_line(A, P), 2) - pow(Dlina_line(P, null), 2)) / (2 * Dlina_line(A, P)*Dlina_line(A, null)));
-	alpha = -Ugol*90;
-}
-void SCHET_ALPHA_1(double P[], double D[], double t)
-{/*
-	double null[] = {4,D[1]};
-	double Ugol = acos((pow(Dlina_line(D, null), 2) + pow(Dlina_line(D, P), 2) - pow(Dlina_line(P, null), 2)) / (2 * Dlina_line(D, P)*Dlina_line(D, null)));
-	alpha = -Ugol*90;
-	*/
-}
-void DVIG_KRIVAYA_Bese(double A[], double B[], double C[], double D[]) //первая НЕРАБ В 3D функция
-{	/*
-	if (flag_obratno == 1)
-		t -= 0.001;
-	if (flag_obratno == 0)
-			t += 0.001;
-	if (t>=0.999) flag_obratno = 1;
-	if (t<=0) flag_obratno = 0;
-
-			double P[] = {0,0,0};
-			double Dop3 = (1-t);
-			double Dop2 = pow((1-t),2);
-			double Dop1 = pow((1-t),3);
-
-			P[0] = Dop1*A[0] + 3*t*Dop2*B[0] + 3*t*t*Dop3*C[0] +  t*t*t*D[0];
-			P[1] = Dop1*A[1] + 3*t*Dop2*B[1] + 3*t*t*Dop3*C[1] +  t*t*t*D[1];
-			P[2] = Dop1*A[2] + 3*t*Dop2*B[2] + 3*t*t*Dop3*C[2] +  t*t*t*D[2];
-
-			if (FLAG_ALPHA_CANAL == 1)
-			{
-				double Dop[] = {(D[0]-A[0])/2,(D[1]+A[1])/2, 1};
-				if (t<0.5)
-				SCHET_ALPHA(P,A,t);
-				if (t>0.5)
-				SCHET_ALPHA_1(P,D,t);
-
-				glTranslated(P[0],P[1],P[2]);
-				glRotatef(alpha,1,1,1);
-		
-			//glTranslated(P[0],P[1],0);
-			//OBJECT_01(P[0],P[1],1,0.2);
-				
-			}
-			else t=0;
-
-			
-
-			OBJECT_01(0,0,1,0.2);
-		//OBJECT_01(A[0],A[1],1,0.2);*/
-} // 
-//<<<<<
-
 int izm_one = 1;
 double Tochka_begin[] = { 0,0,0 };
 double Tochka_real[] = { 0,0,0 };
 
-
-void MovementBezie(double A[], double B[], double C[], double D[], double Point[])
+void DVIG_Bezie(double A[], double B[], double C[], double D[], double Point[])
 {
 	Point[0] = pow(1 - t, 3)*A[0] + 3 * t*pow(1 - t, 2)*B[0] + 3 * t*t*(1 - t)*C[0] + t*t*t*D[0];
 	Point[1] = pow(1 - t, 3)*A[1] + 3 * t*pow(1 - t, 2)*B[1] + 3 * t*t*(1 - t)*C[1] + t*t*t*D[1];
@@ -1594,41 +1438,6 @@ void MovementBezie(double A[], double B[], double C[], double D[], double Point[
 	t += 0.005 * izm_one;
 }
 
-
-
-
-//================================================================================================================
-//================================================================================================================
-//================================================================================================================
-
-void DOP_PLOSKOST()
-{	
-
-	double a = 20;
-
-	double z_dop_ploskosti = 0;
-
-	glBegin(GL_QUADS);
-	
-	glNormal3d(0,0,1);
-	glColor4d(0.965,0.38,0.78,1.0);
-
-	glTexCoord2d((double)513/(double)1024,1-((double)766/(double)1024));
-	glVertex3d(-a,-a,z_dop_ploskosti);
-
-	glTexCoord2d((double)513/(double)1024,1-((double)513/(double)1024));
-	glVertex3d(-a,a,z_dop_ploskosti);
-
-	glTexCoord2d((double)766/(double)1024,1-((double)513/(double)1024));
-	glVertex3d(a,a,z_dop_ploskosti);
-
-	glTexCoord2d((double)766/(double)1024,1-((double)766/(double)1024));
-	glVertex3d(a,-a,z_dop_ploskosti);
-
-	glEnd();
-}
-
-//================================================================================================================
 //================================================================================================================
 //================================================================================================================
 
@@ -1686,15 +1495,7 @@ void Render(OpenGL *ogl)
 	
 		//Тудунь-сюдунь
 	glTranslated(X_D,Y_D,Z_D);
-	if (FLAG_PRIGOK==1)
-		PRIGOK(3);
-	//-------------------------------------------------
-	/*glPushMatrix();
-	glTranslated(0,-(0+1+0.5+1.0/10.0),0);
-	OBJECT_01(0,0,0,1.0);
-	glPopMatrix();*/
-	//----------------------------------------------------------------------------------------------------
-
+	
 	double z = 2;
 	double z1 = 1;
 	double zDOP = z+1;
@@ -1710,7 +1511,6 @@ void Render(OpenGL *ogl)
 	glScaled(0.2,0.2,0.2);
 	Krug(0,0,0,2 , 1,1,1,1.0);
 	glPopMatrix();
-	//DOP_PLOSKOST();//!!!!!!!!!!!!!!!!!!
 	//=======	
 		
 		glPushMatrix();
@@ -1734,17 +1534,7 @@ void Render(OpenGL *ogl)
 		if (FLAG_ROTATE == 1)
 				glRotatef(a+=0.5, 0,0,1);
 	glTranslatef (-3,-3.5,0);
-  //====
-
-
-									/*//-->>Построение нормали
-									COORD_VEKTOR(A,B);
-									double vektor_a[] = {Vektor[0],Vektor[1],Vektor[2]};
-									COORD_VEKTOR(H,B);
-									double vektor_b[] = {Vektor[0],Vektor[1],Vektor[2]};
-									NORMAL(vektor_a,vektor_b);
-									glNormal3d(Mas_NORMAL[0],Mas_NORMAL[1],Mas_NORMAL[2]);
-									//--<<*/
+  //===
 
 	glColor4d(0.5,0.5,0.5,1);
 	glNormal3d(0,0,-1);
@@ -1793,10 +1583,6 @@ void Render(OpenGL *ogl)
 	//glDisable(GL_BLEND);
 
 	//================================================================================================================
-	//================================================================================================================
-	//================================================================================================================
-	//================================================================================================================
-	//================================================================================================================
 
 	if (FLAG_NUMBER_RABOT == 1)
 	{
@@ -1808,9 +1594,6 @@ void Render(OpenGL *ogl)
 		double C1[]={2,6},C1R1[]={1.5*1.5,7.5*1.5}, D1[]={5,4.5},D1R2[]={5.5,6*2};
 
 		glPushMatrix();
-		//glRotated(a+=0.1,0,0,1);
-//DVIG_KRIVAYA_Bese(A,B,C,D); //первая НЕРАБ В 3D функция
-		//OBJECT_01(0,0,2,0.2);
 
 	double A[] = { 0,0,0 };
 	double B[] = { -15*1.5,20 * 1.5,40 * 1.5 };
@@ -1819,12 +1602,7 @@ void Render(OpenGL *ogl)
 
 	if (FLAG_ALPHA_CANAL == 1)
 	{
-		/*if (t==0)
-		{
-			double vector_object_01[]={0,1,0};
-			double vector_pervoi_pryamoi[]={B[0]-A[0],B[1]-A[1],B[2]-A[2]};	
-		}*/
-		MovementBezie(A, B, C, D, Tochka_real);
+		DVIG_Bezie(A, B, C, D, Tochka_real);
 		if (t >= 1.0 || t <= 0)
 			izm_one *= -1;  //порядок изменения направления движения
 		glPushMatrix();
@@ -1837,9 +1615,9 @@ void Render(OpenGL *ogl)
 
 			glPushMatrix();
 				glRotated(Ugol * 180 / PI, -Vecktor_[1], Vecktor_[0], 0);
-				/*glTranslated(0,-(0+1+0.5+1.0/10.0),0);
-				glRotated(90, 1, 0, 0);
-							OBJECT_01(0,0,0,1.0);*/
+							/*glTranslated(0,-(0+1+0.5+1.0/10.0),0);
+							  glRotated(90, 1, 0, 0);
+							  OBJECT_01(0,0,0,1.0);*/
 						KUBIK_1(0,0,0,1.2);
 
 			glPopMatrix();
@@ -1854,11 +1632,8 @@ void Render(OpenGL *ogl)
 
 
 	glPushMatrix();
-	//k+=0.01;
 
 	KUBIK_1(0,0,0,0.35);//передаем координаты центра + размер единичной стороны
-
-	//glTranslated(0,0,1);
 
 	KRIVAYA_Bese(A,B,C,D,	0.341,0.078,0.667);
 	KRIVAYA_Bese(D,C,E,F,	0.851,0.353,0.502);
@@ -1871,10 +1646,6 @@ void Render(OpenGL *ogl)
 	glPopMatrix();
 
 	}
-
-
-	//================================================================================================================
-	//================================================================================================================
 	//================================================================================================================
 
 	//текст сообщения вверху слева, если надоест - закоментировать, или заменить =)
@@ -1888,10 +1659,5 @@ void Render(OpenGL *ogl)
 		"1 - Призма	                  2 - Кривые\n", textureMode, lightMode);
 	ogl->message = std::string(c);
 
-
-
-	/*X_D = 0;
-	Y_D = 0;
-	Z_D = 0;*/
 }   //конец тела функции
 
